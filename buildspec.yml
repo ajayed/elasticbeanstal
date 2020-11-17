@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  #install:
+  #commands:
+  # - gem install jekyll jekyll-paginate jekyll-sitemap jekyll-gist
+  build:
+    commands:
+      - cd $CODEBUILD_SRC_DIR/src && cp .env.$ENV .env
+      - cd $CODEBUILD_SRC_DIR/src  && npm install
+      # - npm install terser@3.14.1 --save-dev
+      - cd $CODEBUILD_SRC_DIR/src  && npm run build
+      - echo "******** Cleaning S3 objects ********"
+      - aws s3 rm $S3_BUCKET --recursive
+artifacts:
+  files:
+    - "**/*"
+  base-directory: src/build
